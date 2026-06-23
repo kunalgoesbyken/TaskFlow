@@ -66,32 +66,4 @@ export function verifyOAuthState(state: string): string | null {
   }
 }
 
-/**
- * Creates a standardized redirect response for OAuth errors.
- *
- * @param baseUrl - The base URL for redirect
- * @param errorCode - The error code to append
- * @returns A NextResponse redirect
- */
-export function createOAuthErrorRedirect(baseUrl: string, errorCode: string): Response {
-  const url = new URL(baseUrl);
-  url.searchParams.set('error', errorCode);
 
-  return Response.redirect(url);
-}
-
-/**
- * Creates a standardized redirect response for OAuth success.
- *
- * @param baseUrl - The base URL for redirect
- * @param params - Additional query parameters to add
- * @returns A NextResponse redirect
- */
-export function createOAuthSuccessRedirect(baseUrl: string, params: Record<string, string> = {}): Response {
-  const url = new URL(baseUrl);
-  for (const [key, value] of Object.entries(params)) {
-    url.searchParams.set(key, value);
-  }
-
-  return Response.redirect(url);
-}

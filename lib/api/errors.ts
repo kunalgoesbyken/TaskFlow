@@ -118,13 +118,6 @@ export function validationError(zodError: ZodError, message: string = 'Invalid i
   return badRequest(message, fieldErrors);
 }
 
-/**
- * Creates an error response for invalid JSON
- */
-export function invalidJson(): NextResponse<ApiError> {
-  return badRequest('Invalid JSON in request body');
-}
-
 // ============================================================================
 // Success Response Helpers
 // ============================================================================
@@ -184,7 +177,7 @@ export function handleApiError(
 
   // Handle JSON syntax errors
   if (error instanceof SyntaxError) {
-    return invalidJson();
+    return badRequest('Invalid JSON in request body');
   }
 
   // Log unhandled errors
@@ -195,27 +188,4 @@ export function handleApiError(
   return null;
 }
 
-/**
- * Try-catch wrapper for API route handlers
- * Automatically handles common error types and returns a generic server error for unhandled exceptions
- *
- * @param handler - The async route handler function
- * @param context - Optional context for error logging
- */
-export async function withErrorHandler<T>(
-  handler: () => Promise<NextResponse<T>>,
-  context?: string
-): Promise<NextResponse<ApiResponse<T>>> {
-  try {
-    const response = await handler();
-    // Check if response is already an ApiResponse
-    const data = await response.clone().json() as T;
-    return NextResponse.json({ success: true, data } as ApiSuccess<T>, { status: response.status });
-  } catch (error) {
-    const handled = handleApiError(error, context);
-    if (handled) return handled as NextResponse<ApiResponse<T>>;
 
-    // Return generic server error for unhandled exceptions
-    return serverError() as NextResponse<ApiResponse<T>>;
-  }
-}

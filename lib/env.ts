@@ -175,15 +175,4 @@ export const env = createEnv({
   },
 });
 
-/**
- * Type inference for environment variables.
- *
- * Use this type in your code for full type safety:
- *
- * ```ts
- * import { env } from '@/lib/env';
- *
- * const dbUrl: string = env.DATABASE_URL; // Fully typed
- * ```
- */
-export type Env = typeof env;
+

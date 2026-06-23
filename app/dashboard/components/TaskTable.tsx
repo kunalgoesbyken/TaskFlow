@@ -28,7 +28,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Badge, badgeVariants } from '@/components/ui/badge';
+import { Badge } from '@/components/ui/badge';
 import {
   Select,
   SelectContent,
@@ -46,7 +46,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 import { BulkActionBar } from './BulkActionBar';
 import { DueDate } from '@/components/ui/due-date';
-import { Github, Inbox, ChevronLeft, ChevronRight, Loader2, ChevronDown, AlertCircle } from 'lucide-react';
+import { Github, Inbox, ChevronLeft, ChevronRight, Loader2, ChevronDown } from 'lucide-react';
 import { motion } from 'motion/react';
 import { STATUS_LABELS, STATUS_CONFIG, getPriorityVariant } from '@/lib/constants/status';
 import { normalizeStatus } from '@/lib/constants/filters';

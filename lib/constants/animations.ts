@@ -56,13 +56,4 @@ export const STAGGER = {
   SLOW: 0.15,
 } as const;
 
-/**
- * Z-index layers for stacked elements
- */
-export const Z_INDEX = {
-  BASE: 1,
-  STICKY: 5,
-  DROPDOWN: 10,
-  MODAL: 50,
-  TOAST: 100,
-} as const;
+

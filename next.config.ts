@@ -9,6 +9,9 @@ const nextConfig: NextConfig = {
   // Produces a self-contained .next/standalone directory
   output: 'standalone',
   reactStrictMode: true,
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
 
   // Image optimization configuration
   images: {

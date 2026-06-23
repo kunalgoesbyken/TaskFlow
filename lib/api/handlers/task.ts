@@ -48,24 +48,6 @@ export interface TemplateStep {
   allowedTransitions: TaskStatus[];
 }
 
-export interface TaskEventInput {
-  taskId: string;
-  eventType: EventType;
-  oldStatus?: string | null;
-  newStatus?: string | null;
-  newPriority?: TaskPriority | null;
-  changedById: string;
-}
-
-export interface CreateTaskEventOptions {
-  tx?: typeof prisma;
-  task: { id: string; status: string | null };
-  eventType: EventType;
-  userId: string;
-  newStatus?: string | null;
-  newPriority?: TaskPriority | null;
-}
-
 // ============================================================================
 // Template Validation
 // ============================================================================
@@ -169,31 +151,6 @@ export function validateTemplateTransition(
 }
 
 // ============================================================================
-// Task Event Creation
-// ============================================================================
-
-/**
- * Creates a task event with proper error handling
- *
- * @param options - Event creation options
- * @returns The created event or null on failure
- */
-export async function createTaskEvent(options: CreateTaskEventOptions) {
-  const { tx = prisma, task, eventType, userId, newStatus, newPriority } = options;
-
-  return tx.taskEvent.create({
-    data: {
-      taskId: task.id,
-      eventType,
-      oldStatus: task.status,
-      newStatus: newStatus ?? task.status,
-      newPriority,
-      changedById: userId,
-    },
-  });
-}
-
-// ============================================================================
 // Task Query Helpers
 // ============================================================================
 
@@ -247,86 +204,4 @@ export async function verifyUserExists(userId: string | null | undefined): Promi
   return user !== null;
 }
 
-// ============================================================================
-// Generic Task Update Handler
-// ============================================================================
 
-export interface TaskUpdateInput {
-  taskId: string;
-  userId: string;
-}
-
-export interface TaskMutationResult<T = unknown> {
-  success: boolean;
-  data?: T;
-  error?: string;
-  errorResponse?: Response;
-}
-
-/**
- * Generic handler for task mutations with common pattern:
- * 1. Verify task exists
- * 2. Perform update
- * 3. Create event log
- * 4. Optionally create notification
- *
- * @param params - Mutation parameters
- * @returns Result with data or error
- */
-export async function mutateTask<T = unknown>({
-  taskId,
-  userId,
-  updateData,
-  eventType,
-  transaction,
-}: {
-  taskId: string;
-  userId: string;
-  updateData: Record<string, unknown>;
-  eventType?: EventType;
-  transaction?: boolean;
-}): Promise<TaskMutationResult<T>> {
-  const executor = transaction ? prisma.$transaction : (async (fn: () => Promise<T>) => fn()) as unknown as typeof prisma.$transaction;
-
-  try {
-    const result = await executor(async (tx) => {
-      const prismaClient = tx || prisma;
-
-      // Check task exists
-      const task = await prismaClient.task.findUnique({
-        where: { id: taskId },
-      });
-
-      if (!task) {
-        return { success: false, error: 'Task not found' } as TaskMutationResult<T>;
-      }
-
-      // Perform update
-      const updated = await prismaClient.task.update({
-        where: { id: taskId },
-        data: updateData,
-        include: TASK_INCLUDES,
-      }) as T;
-
-      // Create event if specified
-      if (eventType) {
-        await prismaClient.taskEvent.create({
-          data: {
-            taskId,
-            eventType,
-            oldStatus: task.status,
-            newStatus: 'status' in updateData ? String(updateData.status) : task.status,
-            changedById: userId,
-          },
-        });
-      }
-
-      return { success: true, data: updated } as TaskMutationResult<T>;
-    });
-
-    return result;
-  } catch (error) {
-    console.error('Task mutation error:', error);
-    return { success: false, error: 'Failed to update task' };
-  }
-}

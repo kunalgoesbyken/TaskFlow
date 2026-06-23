@@ -22,7 +22,7 @@ const clients = new Map<string, WebClient>();
  * @param tokens - Access tokens for the workspace
  * @returns WebClient instance configured with the provided tokens
  */
-export function getSlackClient(teamId: string, tokens: SlackTokens): WebClient {
+function getSlackClient(teamId: string, tokens: SlackTokens): WebClient {
   if (clients.has(teamId)) {
     return clients.get(teamId)!;
   }
@@ -58,13 +58,4 @@ export async function getSlackClientByTeam(teamId: string): Promise<WebClient | 
   });
 }
 
-/**
- * Clears a cached WebClient for a workspace.
- *
- * Use this after token updates to force a new client with fresh credentials.
- *
- * @param teamId - Slack workspace team ID
- */
-export function clearSlackClient(teamId: string): void {
-  clients.delete(teamId);
-}
+

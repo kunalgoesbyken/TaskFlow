@@ -59,35 +59,3 @@ export async function requireAuth() {
   return user;
 }
 
-/**
- * Create a Supabase client with service role privileges.
- *
- * This client bypasses Row Level Security (RLS) policies and should ONLY be used for:
- * - Webhook handlers (GitHub, etc.)
- * - Background jobs and scheduled tasks
- * - System-level operations that don't have a user context
- *
- * NEVER use this in routes that handle authenticated user requests.
- * NEVER expose this client to client-side code.
- */
-export async function createServiceRoleClient() {
-  const { env } = await import('@/lib/env');
-
-  return createServerClient(
-    env.NEXT_PUBLIC_SUPABASE_URL,
-    env.SUPABASE_SERVICE_ROLE_KEY,
-    {
-      cookies: {
-        get() {
-          return undefined;
-        },
-        set() {
-          // No-op for service role
-        },
-        remove() {
-          // No-op for service role
-        },
-      },
-    }
-  );
-}

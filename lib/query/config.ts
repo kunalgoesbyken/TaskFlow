@@ -31,7 +31,3 @@ export const queryConfig = {
   },
 } as const;
 
-export const mutationConfig = {
-  retry: 1,
-  throwOnError: false,
-} as const;

@@ -1,5 +1,4 @@
 export * from './CTASection';
-export * from './CommandSnippet';
 export * from './NewFeaturesSection';
 export * from './FeaturesSection';
 export * from './Footer';
@@ -7,5 +6,3 @@ export * from './HeroSection';
 export * from './NotificationsDemo';
 export * from './ProblemSection';
 export * from './SolutionSection';
-export * from './ScrollReveal';
-export * from './FloatingElement';

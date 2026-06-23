@@ -23,8 +23,3 @@ export function createClient() {
   return client;
 }
 
-/**
- * Get a typed Supabase client with proper TypeScript types.
- * This is a convenience export for consistency.
- */
-export const supabase = createClient();

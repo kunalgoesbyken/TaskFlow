@@ -32,16 +32,4 @@ export const Z_INDEX = {
   MAXIMUM: 100,
 } as const;
 
-/**
- * Responsive breakpoint helpers
- */
-export const BREAKPOINTS = {
-  /** Mobile first breakpoint */
-  SM: 640,
-  /** Tablet breakpoint */
-  MD: 768,
-  /** Desktop breakpoint */
-  LG: 1024,
-  /** Wide desktop breakpoint */
-  XL: 1280,
-} as const;
+

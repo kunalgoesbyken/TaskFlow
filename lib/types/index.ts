@@ -162,18 +162,6 @@ export interface ApiErrorResponse {
 export type ApiResponse<T> = ApiSuccessResponse<T> | ApiErrorResponse;
 
 // ============================================================================
-// Query Keys (for TanStack Query)
-// ============================================================================
-
-export const queryKeys = {
-  tasks: (filters?: TaskFilters) => ['tasks', filters] as const,
-  task: (id: string) => ['tasks', id] as const,
-  notifications: ['notifications'] as const,
-  notificationsUnread: ['notifications', 'unread-count'] as const,
-  users: ['users'] as const,
-} as const;
-
-// ============================================================================
 // Auth Types
 // ============================================================================
 

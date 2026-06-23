@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation';
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 import { getAuthUser } from '@/lib/supabase/server';
 import prisma from '@/lib/prisma';
 import { DashboardSidebar } from '../components/DashboardSidebar';
@@ -8,6 +9,8 @@ import { TimezoneLanesContent } from './TimezoneLanesContent';
 export const metadata: Metadata = {
   title: 'Timezone Lanes',
 };
+
+export const dynamic = 'force-dynamic';
 
 async function getTeamData() {
   const [users, tasks] = await Promise.all([
@@ -54,8 +57,10 @@ export default async function TimezoneLanesPage() {
   const { users, tasks } = await getTeamData();
 
   return (
-    <DashboardSidebar users={users} userEmail={user.email ?? 'Unknown'}>
-      <TimezoneLanesContent users={users} tasks={tasks} />
-    </DashboardSidebar>
+    <Suspense fallback={<div className="p-8 text-muted-foreground">Loading dashboard...</div>}>
+      <DashboardSidebar users={users} userEmail={user.email ?? 'Unknown'}>
+        <TimezoneLanesContent users={users} tasks={tasks} />
+      </DashboardSidebar>
+    </Suspense>
   );
 }
