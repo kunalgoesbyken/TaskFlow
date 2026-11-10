@@ -37,6 +37,7 @@ async function getTeamData() {
         priority: true,
         dueDate: true,
         assignedTo: true,
+        assignedToUser: { select: { id: true, email: true } },
         githubIssueNumber: true,
       },
       orderBy: { updatedAt: 'desc' },
