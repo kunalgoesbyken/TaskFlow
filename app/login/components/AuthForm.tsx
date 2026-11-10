@@ -30,6 +30,25 @@ export function AuthForm({ mode, redirectTo }: AuthFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
+  const handleDemo = async () => {
+    setError(null);
+    setIsLoading(true);
+
+    try {
+      const response = await fetch('/api/auth/demo', { method: 'POST' });
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Demo sign-in failed');
+      }
+
+      router.replace(redirectTo || '/dashboard');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
+      setIsLoading(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -65,6 +84,12 @@ export function AuthForm({ mode, redirectTo }: AuthFormProps) {
 
   return (
     <div className="space-y-6">
+      {mode === 'login' && (
+        <Button type="button" onClick={handleDemo} disabled={isLoading} className="w-full">
+          Try the demo
+        </Button>
+      )}
+
       <OAuthButtons redirectTo={redirectTo} />
 
       <div className="relative">
