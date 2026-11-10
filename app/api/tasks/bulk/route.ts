@@ -48,37 +48,39 @@ export async function POST(req: Request) {
 
       case 'changeStatus': {
         const status = payload?.status;
-        await prisma.task.updateMany({
-          where: { id: { in: taskIds } },
-          data: { status },
-        });
-        // Create task events for audit trail
-        await prisma.taskEvent.createMany({
-          data: taskIds.map((taskId) => ({
-            taskId,
-            eventType: 'STATUS_CHANGED',
-            newStatus: status,
-            changedById: user.id,
-          })),
-        });
+        await prisma.$transaction([
+          prisma.task.updateMany({
+            where: { id: { in: taskIds } },
+            data: { status },
+          }),
+          prisma.taskEvent.createMany({
+            data: taskIds.map((taskId) => ({
+              taskId,
+              eventType: 'STATUS_CHANGED',
+              newStatus: status,
+              changedById: user.id,
+            })),
+          }),
+        ]);
         break;
       }
 
       case 'changePriority': {
         const priority = payload?.priority;
-        await prisma.task.updateMany({
-          where: { id: { in: taskIds } },
-          data: { priority },
-        });
-        // Create task events for audit trail
-        await prisma.taskEvent.createMany({
-          data: taskIds.map((taskId) => ({
-            taskId,
-            eventType: 'PRIORITY_CHANGED',
-            newPriority: priority,
-            changedById: user.id,
-          })),
-        });
+        await prisma.$transaction([
+          prisma.task.updateMany({
+            where: { id: { in: taskIds } },
+            data: { priority },
+          }),
+          prisma.taskEvent.createMany({
+            data: taskIds.map((taskId) => ({
+              taskId,
+              eventType: 'PRIORITY_CHANGED',
+              newPriority: priority,
+              changedById: user.id,
+            })),
+          }),
+        ]);
         break;
       }
 
@@ -92,18 +94,19 @@ export async function POST(req: Request) {
         if (!assignee) {
           return notFound('Assignee not found');
         }
-        await prisma.task.updateMany({
-          where: { id: { in: taskIds } },
-          data: { assignedTo },
-        });
-        // Create task events for audit trail
-        await prisma.taskEvent.createMany({
-          data: taskIds.map((taskId) => ({
-            taskId,
-            eventType: 'ASSIGNED',
-            changedById: user.id,
-          })),
-        });
+        await prisma.$transaction([
+          prisma.task.updateMany({
+            where: { id: { in: taskIds } },
+            data: { assignedTo },
+          }),
+          prisma.taskEvent.createMany({
+            data: taskIds.map((taskId) => ({
+              taskId,
+              eventType: 'ASSIGNED',
+              changedById: user.id,
+            })),
+          }),
+        ]);
         break;
       }
 

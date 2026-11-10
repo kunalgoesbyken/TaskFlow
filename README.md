@@ -350,7 +350,7 @@ Running `make db:seed` creates:
 - `POST /api/tasks/update-status` - Change task status
 - `POST /api/tasks/update-priority` - Change task priority
 - `POST /api/tasks/reassign` - Reassign task
-- `POST /api/tasks/bulk` - Bulk operations
+- `POST /api/tasks/bulk` - Bulk operations (each update and its audit events commit atomically)
 
 ### Notifications
 - `GET /api/notifications` - User notifications
